@@ -1,0 +1,85 @@
+/* ============================================================
+   Animacao de caminhada (walk-in-place) — estilo mascote
+   ------------------------------------------------------------
+   >>> AJUSTES RAPIDOS: mexa apenas nas variaveis abaixo <<<
+   ============================================================ */
+:root {
+  /* Caminho da tira de sprites (troque aqui) */
+  --sprite: url("output/walk_strip.png");
+
+  /* Dimensoes de UM quadro (px) — devem bater com a tira gerada */
+  --frame-w: 288px;
+  --frame-h: 338px;
+
+  /* Quantidade de quadros na tira horizontal */
+  --frames: 8;
+
+  /* Velocidade: duracao de um ciclo completo de caminhada.
+     Menor = mais rapido. Ex.: 0.6s (rapido), 1s (normal), 1.6s (lento) */
+  --speed: 0.9s;
+
+  /* Escala do mascote na tela (2 = dobro do tamanho) */
+  --scale: 1.2;
+}
+
+/* Cena de fundo (so pra enquadrar o mascote) */
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #1b1f2a radial-gradient(circle at 50% 120%, #2b3350, #14171f 70%);
+  font-family: system-ui, sans-serif;
+}
+
+/* O mascote */
+.sprite {
+  width: var(--frame-w);
+  height: var(--frame-h);
+
+  background-image: var(--sprite);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+
+  /* Mantem o pixel-art nitido ao escalar */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  transform: scale(var(--scale));
+  transform-origin: bottom center;
+
+  /* steps(--frames) faz o "pulo" quadro a quadro, sem interpolar */
+  animation: walk var(--speed) steps(var(--frames)) infinite;
+}
+
+/* Desloca o fundo em exatamente N quadros para a esquerda.
+   Com steps(N), sao exibidas N posicoes: 0, -1fw, ..., -(N-1)fw. */
+@keyframes walk {
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--frame-w) * var(--frames) * -1); }
+}
+
+/* Respeita quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .sprite { animation: none; }
+}
+
+/* ---------- Painel de controle opcional (so pra testar) ---------- */
+.panel {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(20, 23, 31, .82);
+  color: #e8ecf5;
+  font-size: 13px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+}
+.panel label { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.panel input[type="range"] { width: 160px; }
+.panel .val { font-variant-numeric: tabular-nums; opacity: .8; min-width: 46px; text-align: right; }
+.panel h1 { margin: 0 0 4px; font-size: 14px; font-weight: 600; letter-spacing: .3px; }

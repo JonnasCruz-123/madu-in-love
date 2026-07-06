@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mascote — Walk (8 frames)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- O mascote. Toda a animacao vem do CSS (.sprite + @keyframes walk). -->
+  <div class="sprite" role="img" aria-label="Personagem chibi caminhando"></div>
+
+  <!-- Painel opcional: ajusta velocidade e escala ao vivo. Pode remover. -->
+  <div class="panel">
+    <h1>🚶 Walk cycle</h1>
+    <label>
+      Velocidade
+      <input id="speed" type="range" min="0.3" max="2.0" step="0.05" value="0.9">
+      <span class="val" id="speedVal">0.90s</span>
+    </label>
+    <label>
+      Escala
+      <input id="scale" type="range" min="0.5" max="3" step="0.1" value="1.2">
+      <span class="val" id="scaleVal">1.2&times;</span>
+    </label>
+  </div>
+
+  <script>
+    // Controles ao vivo (opcionais). Escrevem nas mesmas variaveis CSS.
+    const root = document.documentElement;
+    const speed = document.getElementById('speed');
+    const scale = document.getElementById('scale');
+    const speedVal = document.getElementById('speedVal');
+    const scaleVal = document.getElementById('scaleVal');
+
+    speed.addEventListener('input', () => {
+      root.style.setProperty('--speed', speed.value + 's');
+      speedVal.textContent = Number(speed.value).toFixed(2) + 's';
+    });
+    scale.addEventListener('input', () => {
+      root.style.setProperty('--scale', scale.value);
+      scaleVal.innerHTML = Number(scale.value).toFixed(1) + '&times;';
+    });
+  </script>
+</body>
+</html>
