@@ -40,6 +40,11 @@ COL_BANDS = [(210, 510), (570, 870), (928, 1228), (1291, 1591)]
 BG_MIN_CHANNEL = 228      # todos os canais RGB precisam ser >= isto
 BG_MAX_SATURATION = 20    # (max-min) dos canais <= isto  (cinza neutro)
 
+# Bolsoes de fundo presos DENTRO do personagem (grade branca entre os cachos
+# do cabelo, atras dos oculos). Removemos os grandes; os pequenos e brilhantes
+# — os brilhos brancos dos olhos — sao preservados.
+POCKET_MAX_KEEP = 110     # area (px): bolsao <= isto e mantido (brilho do olho)
+
 PAD = 12                  # margem de seguranca ao redor do quadro normalizado
 
 
@@ -59,18 +64,27 @@ def make_transparent(rgba: np.ndarray) -> np.ndarray:
 
     bg_like = (mn >= BG_MIN_CHANNEL) & ((mx - mn) <= BG_MAX_SATURATION)
 
-    # Rotula regioes de "cor de fundo" e mantem so as que tocam a borda.
+    # Rotula regioes de "cor de fundo".
     labels, n = ndimage.label(bg_like)
+    remove = np.zeros_like(bg_like)
     if n > 0:
         border = set(labels[0, :]) | set(labels[-1, :]) | \
                  set(labels[:, 0]) | set(labels[:, -1])
         border.discard(0)
-        outside = np.isin(labels, list(border))
-    else:
-        outside = np.zeros_like(bg_like)
+        # 1) tudo que toca a borda = fundo externo (grade + branco em volta).
+        remove |= np.isin(labels, list(border))
+        # 2) bolsoes internos GRANDES = grade presa no cabelo/atras dos oculos.
+        #    Bolsoes pequenos (brilho dos olhos) ficam.
+        sizes = ndimage.sum(np.ones_like(labels), labels, index=range(1, n + 1))
+        border_lbls = set(border)
+        for i in range(1, n + 1):
+            if i in border_lbls:
+                continue
+            if sizes[i - 1] > POCKET_MAX_KEEP:
+                remove |= (labels == i)
 
     out = rgba.copy()
-    out[outside, 3] = 0
+    out[remove, 3] = 0
     return out
 
 
