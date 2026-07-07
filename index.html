@@ -11,7 +11,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Madu in Love</title>
-  <link rel="stylesheet" href="game.css?v=8">
+  <link rel="stylesheet" href="game.css?v=10">
 </head>
 <body>
   <!-- Aviso pra deitar o celular (aparece só em retrato) -->
@@ -30,15 +30,25 @@
       <button class="menu-hot" id="achBtn"   style="left:42.5%; top:92%;  width:15%; height:6%"></button>
     </div>
     <button class="fs-btn" id="fsMenuBtn" type="button" aria-label="Tela cheia">⛶</button>
-    <div class="menu-ver">v8 · tela cheia</div>
+    <div class="menu-ver">v10 · Fase 1</div>
     <div class="menu-toast" id="menuToast"></div>
   </div>
 
-  <!-- JOGO (plataforma, paisagem) -->
+  <!-- JOGO (plataforma, paisagem) — Fase 1: Vila da Alma Quebrada -->
   <div class="stage" id="stage" hidden>
-    <div class="cloud" style="left:10%; top:12%; width:64px; height:24px;"></div>
-    <div class="cloud" style="left:58%; top:8%;  width:86px; height:30px;"></div>
-    <div class="cloud" style="left:84%; top:18%; width:54px; height:20px;"></div>
+    <!-- passarinhos passando ao fundo -->
+    <div id="birds">
+      <span class="bird" style="top:5%;  font-size:17px; --dur:24s; --delay:1s;  --flap:.45s;"></span>
+      <span class="bird" style="top:9%;  font-size:13px; --dur:33s; --delay:7s;  --flap:.55s;"></span>
+      <span class="bird" style="top:3%;  font-size:16px; --dur:29s; --delay:14s; --flap:.5s;"></span>
+      <span class="bird" style="top:12%; font-size:11px; --dur:38s; --delay:21s; --flap:.6s;"></span>
+    </div>
+
+    <!-- carta de fase -->
+    <div class="level-card" id="levelCard">
+      <div class="lc-sub">FASE 1</div>
+      <div class="lc-title">Vila da Alma Quebrada</div>
+    </div>
 
     <!-- HUD -->
     <div class="hud">
@@ -63,6 +73,6 @@
     <button class="fs-btn fs-btn-game" id="fsGameBtn" type="button" aria-label="Tela cheia">⛶</button>
   </div>
 
-  <script src="game.js?v=8"></script>
+  <script src="game.js?v=10"></script>
 </body>
 </html>

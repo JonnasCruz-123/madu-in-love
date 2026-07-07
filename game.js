@@ -22,6 +22,7 @@
   const backBtn = document.getElementById('backBtn');
   const fsMenuBtn = document.getElementById('fsMenuBtn');
   const fsGameBtn = document.getElementById('fsGameBtn');
+  const levelCard = document.getElementById('levelCard');
 
   const num = v => parseFloat(getComputedStyle(root).getPropertyValue(v));
 
@@ -250,6 +251,10 @@
     buildPlatforms();
     resetPlayer();
     playing = true;
+    // carta de fase: aparece e some
+    levelCard.classList.add('show');
+    clearTimeout(startGame._t);
+    startGame._t = setTimeout(() => levelCard.classList.remove('show'), 2200);
   }
   function toMenu() {
     playing = false;
