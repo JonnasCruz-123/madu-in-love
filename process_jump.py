@@ -72,6 +72,11 @@ def isolate_char(cell):
         keep = np.argmax(sz) + 1
         drop = op & (lab != keep)
         out[drop, 3] = 0
+    # de-fringe: tira a franja cinza-clara do cabelo (halo no fundo escuro)
+    sat = mx - mn
+    op2 = out[:, :, 3] > 8
+    fringe = op2 & (mn >= 150) & (mn <= 228) & (sat <= 28)
+    out[fringe, 3] = 0
     return out
 
 
@@ -106,12 +111,13 @@ def main():
     right = max(f["w"] - 1 - f["cx"] for f in frames)
     left = right = max(left, right)   # centro estavel => troca de sprite sem pulo lateral
     frame_w = left + right + 1 + 2 * PAD
+    BOTTOM = 2                                    # pouca folga embaixo => pes no chao
     top_above = max(f["rise"] + f["h"] for f in frames)   # ponto mais alto acima do chao
-    frame_h = top_above + 2 * PAD
+    frame_h = top_above + PAD + BOTTOM
     frame_w += frame_w % 2; frame_h += frame_h % 2
 
     anchor_x = left + PAD
-    baseline = frame_h - PAD                      # onde o pe do frame no chao encosta
+    baseline = frame_h - BOTTOM                    # onde o pe do frame no chao encosta
 
     norm = []
     for f in frames:

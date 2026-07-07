@@ -11,7 +11,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Madu in Love</title>
-  <link rel="stylesheet" href="game.css?v=10">
+  <link rel="stylesheet" href="game.css?v=11">
 </head>
 <body>
   <!-- Aviso pra deitar o celular (aparece só em retrato) -->
@@ -30,7 +30,7 @@
       <button class="menu-hot" id="achBtn"   style="left:42.5%; top:92%;  width:15%; height:6%"></button>
     </div>
     <button class="fs-btn" id="fsMenuBtn" type="button" aria-label="Tela cheia">⛶</button>
-    <div class="menu-ver">v10 · Fase 1</div>
+    <div class="menu-ver">v11 · Fase 1</div>
     <div class="menu-toast" id="menuToast"></div>
   </div>
 
@@ -55,11 +55,14 @@
       <div class="coins"><span class="coin">◉</span> <span id="coinCount">0</span></div>
     </div>
 
-    <!-- Plataformas (posicionadas por JS) -->
-    <div id="platforms"></div>
-
-    <!-- Chao -->
-    <div id="ground"></div>
+    <!-- Conquista secreta -->
+    <div class="achievement" id="achPopup">
+      <div class="ach-trophy">🏆</div>
+      <div class="ach-txt">
+        <div class="ach-head">Conquista desbloqueada</div>
+        <div class="ach-name">confundindo os jogos patrão?</div>
+      </div>
+    </div>
 
     <!-- Personagem -->
     <div class="player" id="player"><div class="sprite" id="sprite"></div></div>
@@ -73,6 +76,6 @@
     <button class="fs-btn fs-btn-game" id="fsGameBtn" type="button" aria-label="Tela cheia">⛶</button>
   </div>
 
-  <script src="game.js?v=10"></script>
+  <script src="game.js?v=11"></script>
 </body>
 </html>

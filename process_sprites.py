@@ -85,6 +85,12 @@ def make_transparent(rgba: np.ndarray) -> np.ndarray:
 
     out = rgba.copy()
     out[remove, 3] = 0
+    # 3) de-fringe: remove a franja cinza-clara (anti-aliasing do fundo) ao
+    #    redor do cabelo. Some no fundo claro, mas vira "halo" no fundo escuro.
+    sat = mx - mn
+    op = out[:, :, 3] > 8
+    fringe = op & (mn >= 150) & (mn <= 228) & (sat <= 28)
+    out[fringe, 3] = 0
     return out
 
 
@@ -154,8 +160,9 @@ def main():
         metrics.append((cx, by, w, h))
 
     left = right = max(left, right)   # pes centrados => troca de sprite sem pulo lateral
+    BOTTOM = 2                        # pouca folga embaixo => pes encostam no chao
     frame_w = left + right + 1 + 2 * PAD
-    frame_h = up + 1 + 2 * PAD
+    frame_h = up + 1 + PAD + BOTTOM
     # Alturas de sprite pares deixam o pixel-art mais estavel:
     frame_w += frame_w % 2
     frame_h += frame_h % 2

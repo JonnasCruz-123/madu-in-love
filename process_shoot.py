@@ -54,6 +54,11 @@ def remove_bg(cell):
             if i not in border and sz[i - 1] > 110:
                 rem |= (lbl == i)
     out = cell.copy(); out[rem, 3] = 0
+    # de-fringe: tira a franja cinza-clara (halo no fundo escuro)
+    sat = mx - mn
+    op = out[:, :, 3] > 8
+    fringe = op & (mn >= 150) & (mn <= 228) & (sat <= 28)
+    out[fringe, 3] = 0
     return out
 
 
@@ -100,8 +105,9 @@ def main():
         left = max(left, cx); right = max(right, w - 1 - cx); up = max(up, by)
         metr.append((cx, by, w, h))
     left = right = max(left, right)   # pes centrados => troca de sprite sem pulo lateral
+    BOTTOM = 2                        # pouca folga embaixo => pes no chao
     frame_w = left + right + 1 + 2 * PAD
-    frame_h = up + 1 + 2 * PAD
+    frame_h = up + 1 + PAD + BOTTOM
     frame_w += frame_w % 2; frame_h += frame_h % 2
     anchor_x = left + PAD; base_line = up + PAD
 
