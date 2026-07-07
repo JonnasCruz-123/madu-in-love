@@ -20,6 +20,8 @@
   const achBtn = document.getElementById('achBtn');
   const menuToast = document.getElementById('menuToast');
   const backBtn = document.getElementById('backBtn');
+  const fsMenuBtn = document.getElementById('fsMenuBtn');
+  const fsGameBtn = document.getElementById('fsGameBtn');
 
   const num = v => parseFloat(getComputedStyle(root).getPropertyValue(v));
 
@@ -219,7 +221,30 @@
     root.style.setProperty('--face', face);
     place();
   }
+  // ---- tela cheia ----
+  function fsElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement;
+  }
+  function enterFullscreen() {
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen;
+    if (req) { try { const r = req.call(el); if (r && r.catch) r.catch(() => {}); } catch (_) {} }
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(() => {});   // trava em paisagem se der
+    }
+  }
+  function toggleFullscreen() {
+    if (fsElement()) {
+      (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document);
+    } else {
+      enterFullscreen();
+    }
+  }
+  fsMenuBtn.addEventListener('click', toggleFullscreen);
+  fsGameBtn.addEventListener('click', toggleFullscreen);
+
   function startGame() {
+    enterFullscreen();          // tela cheia no gesto de INICIAR
     menu.style.display = 'none';
     stage.hidden = false;
     buildPlatforms();

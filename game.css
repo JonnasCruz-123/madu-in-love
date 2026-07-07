@@ -46,7 +46,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
+html, body { height: 100%; height: 100dvh; margin: 0; }
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
@@ -369,4 +369,34 @@ body {
   .joystick .knob { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
   .jump-btn { width: 88px; height: 88px; right: 22px; bottom: 26px; }
   .shoot-btn { width: 76px; height: 76px; right: 124px; bottom: 40px; }
+}
+
+/* =====================================================================
+   TELA CHEIA + AREAS SEGURAS (notch / barra do sistema)
+   ===================================================================== */
+.stage, #menu, #orient { height: 100dvh; }
+
+/* botao de tela cheia */
+.fs-btn {
+  position: fixed; z-index: 60;
+  width: 42px; height: 42px; border-radius: 11px;
+  border: 2px solid rgba(255,255,255,.55);
+  background: rgba(20,23,31,.5); color: #fff; font-size: 18px; line-height: 1;
+  backdrop-filter: blur(4px); cursor: pointer;
+}
+#fsMenuBtn { top: calc(10px + env(safe-area-inset-top)); right: calc(10px + env(safe-area-inset-right)); }
+.fs-btn-game { top: calc(12px + env(safe-area-inset-top)); right: calc(66px + env(safe-area-inset-right)); }
+:fullscreen .fs-btn, :-webkit-full-screen .fs-btn { opacity: .55; }
+
+/* respeita notch / home-indicator nos controles e HUD */
+.joystick  { left: calc(28px + env(safe-area-inset-left));  bottom: calc(28px + env(safe-area-inset-bottom)); }
+.jump-btn  { right: calc(34px + env(safe-area-inset-right)); bottom: calc(44px + env(safe-area-inset-bottom)); }
+.shoot-btn { right: calc(158px + env(safe-area-inset-right)); bottom: calc(62px + env(safe-area-inset-bottom)); }
+.hud       { top: calc(12px + env(safe-area-inset-top));  left: calc(14px + env(safe-area-inset-left)); }
+.menu-back { top: calc(12px + env(safe-area-inset-top));  right: calc(14px + env(safe-area-inset-right)); }
+
+@media (orientation: landscape) and (max-height: 460px) {
+  .joystick  { left: calc(20px + env(safe-area-inset-left));  bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .jump-btn  { right: calc(22px + env(safe-area-inset-right)); bottom: calc(26px + env(safe-area-inset-bottom)); }
+  .shoot-btn { right: calc(124px + env(safe-area-inset-right)); bottom: calc(40px + env(safe-area-inset-bottom)); }
 }

@@ -2,7 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#8fd3ff">
   <title>Madu in Love</title>
   <link rel="stylesheet" href="game.css">
 </head>
@@ -22,6 +26,7 @@
       <button class="menu-hot" id="cfgBtn"   style="left:41.6%; top:85.2%; width:16.6%; height:6%"></button>
       <button class="menu-hot" id="achBtn"   style="left:42.5%; top:92%;  width:15%; height:6%"></button>
     </div>
+    <button class="fs-btn" id="fsMenuBtn" type="button" aria-label="Tela cheia">⛶</button>
     <div class="menu-toast" id="menuToast"></div>
   </div>
 
@@ -51,6 +56,7 @@
     <button class="jump-btn" id="jumpBtn" type="button">PULAR</button>
 
     <button class="menu-back" id="backBtn" type="button" aria-label="Voltar ao menu">☰</button>
+    <button class="fs-btn fs-btn-game" id="fsGameBtn" type="button" aria-label="Tela cheia">⛶</button>
   </div>
 
   <script src="game.js"></script>
