@@ -4,6 +4,9 @@
    >>> AJUSTES RAPIDOS na :root abaixo <<<
    ============================================================ */
 :root {
+  /* Arte do menu inicial */
+  --menu-bg: url("assets/menu_bg.png");
+
   /* Sprite de caminhada */
   --sprite: url("output/walk_strip.png");
   --frame-w: 328px;
@@ -32,11 +35,11 @@
   /* Velocidade da animacao de passo (menor = pernas mais rapidas) */
   --walk-speed: 0.7s;
 
-  /* Tamanho do personagem na tela */
-  --player-scale: 0.55;
+  /* Tamanho do personagem na tela (menor no platformer p/ caber os pulos) */
+  --player-scale: 0.42;
 
-  /* Velocidade de deslocamento pelo cenario (px por segundo) */
-  --move-speed: 240;
+  /* Velocidade horizontal (px por segundo) */
+  --move-speed: 300;
 
   /* Sentido (1 = original/olhando p/ esquerda, -1 = espelhado) */
   --face: 1;
@@ -110,15 +113,14 @@ body {
 }
 .sprite.is-walking { animation-play-state: running; }
 
-/* Pulo: troca a tira, cresce o quadro (espaco pro arco) e toca UMA vez.
-   Mesma origem (bottom center) => os pes continuam no chao ao decolar. */
-.sprite.is-jumping {
-  --scale-mult: 1.06;   /* pulo estava desenhado menor -> iguala ao tamanho base */
+/* No ar (pulo/queda): mostra a POSE de pulo, quadro fixo (apice). */
+.sprite.is-airborne {
+  --scale-mult: 1.06;
   width: var(--jump-w);
   height: var(--jump-h);
   background-image: var(--jump-sprite);
-  animation: jump var(--jump-speed) steps(var(--jump-frames)) 1;
-  animation-play-state: running;
+  background-position-x: calc(var(--jump-w) * -3);   /* frame 4 = apice */
+  animation: none;
 }
 
 /* Tiro: troca a tira e toca UMA vez. Mesma base (feet) que a caminhada. */
@@ -130,8 +132,8 @@ body {
   animation: shoot var(--shoot-speed) steps(var(--shoot-frames)) 1;
   animation-play-state: running;
 }
-/* atirar tem prioridade visual sobre pular (mostra o arco no ar) */
-.sprite.is-shooting.is-jumping { --scale-mult: 1.0; }
+/* atirar tem prioridade visual sobre a pose de pulo (mostra o arco no ar) */
+.sprite.is-shooting.is-airborne { --scale-mult: 1.0; }
 
 @keyframes walk {
   from { background-position-x: 0; }
@@ -257,3 +259,114 @@ body {
 .hud input[type="range"] { width: 130px; }
 .hud .val { font-variant-numeric: tabular-nums; opacity: .85; min-width: 40px; text-align: right; }
 .hint { font-size: 11px; opacity: .7; }
+
+/* =====================================================================
+   MENU, ORIENTACAO, PLATAFORMAS (platformer em paisagem)
+   ===================================================================== */
+
+/* ---- Aviso: gire o celular (so em retrato) ---- */
+#orient { display: none; }
+@media (orientation: portrait) {
+  #orient {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #f3a6b6, #7c6a9c 60%, #3a3552);
+    color: #fff; text-align: center;
+  }
+  #menu, .stage { display: none !important; }
+}
+.orient-card { display: grid; gap: 14px; font: 600 20px/1.4 system-ui, sans-serif; }
+.orient-phone { font-size: 64px; animation: rock 1.6s ease-in-out infinite; }
+.orient-card small { opacity: .8; font-weight: 400; }
+@keyframes rock { 0%,100% { transform: rotate(-12deg);} 50% { transform: rotate(78deg);} }
+
+/* ---- Menu inicial ---- */
+#menu {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(#e79db4 0%, #d98f8f 40%, #8a9c66 70%, #5f7a4a 100%);
+}
+.menu-frame {
+  position: relative;
+  aspect-ratio: 1376 / 768;
+  width: min(100vw, calc(100vh * 1376 / 768));
+  height: auto;
+  max-height: 100vh;
+  background: var(--menu-bg) center / cover no-repeat;
+  image-rendering: pixelated;
+}
+.menu-hot {
+  position: absolute;
+  border: 0; background: transparent; cursor: pointer;
+  border-radius: 10px;
+  transition: box-shadow .12s ease, background .12s ease;
+}
+.menu-hot:hover, .menu-hot:active {
+  background: rgba(255,255,255,.16);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.5) inset, 0 0 18px rgba(255,255,255,.35);
+}
+.menu-toast {
+  position: fixed; left: 50%; bottom: 6%; transform: translateX(-50%) translateY(20px);
+  padding: 10px 18px; border-radius: 999px;
+  background: rgba(20,16,28,.85); color: #ffe6f0; font: 600 15px system-ui, sans-serif;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.menu-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- HUD do jogo ---- */
+.hud {
+  position: fixed; top: 12px; left: 14px; right: auto;
+  display: flex; gap: 10px; padding: 0; background: none; z-index: 10;
+}
+.coins {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 14px 6px 10px; border-radius: 999px;
+  background: rgba(20,23,31,.55); backdrop-filter: blur(4px);
+  color: #fff; font: 700 16px/1 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.coins .coin { color: #ffcf4d; font-size: 18px; }
+
+/* ---- Botao voltar ao menu ---- */
+.menu-back {
+  position: fixed; top: 12px; right: 14px; z-index: 10;
+  width: 44px; height: 44px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,.5);
+  background: rgba(20,23,31,.55); color: #fff; font-size: 20px;
+  backdrop-filter: blur(4px); cursor: pointer;
+}
+
+/* ---- Chao e plataformas ---- */
+#ground {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(#8bbf5f, #6fa049 30%, #5c8a3d 100%);
+  border-top: 4px solid #7ac06a;
+  box-shadow: inset 0 6px 0 rgba(255,255,255,.15);
+  z-index: 1;
+}
+.platform {
+  position: absolute;
+  background: linear-gradient(#7fae4e 0 10px, #6b4a2e 10px 100%);
+  border: 2px solid #4d3520;
+  border-radius: 8px;
+  box-shadow: 0 6px 10px rgba(0,0,0,.25), inset 0 4px 0 rgba(255,255,255,.2);
+  z-index: 2;
+  image-rendering: pixelated;
+}
+.platform::before {   /* graminha no topo */
+  content: ""; position: absolute; left: 4px; right: 4px; top: -3px; height: 6px;
+  background: repeating-linear-gradient(90deg, #8ed36a 0 4px, #79c257 4px 8px);
+  border-radius: 4px;
+}
+
+/* jogador acima das plataformas */
+.player { z-index: 4; }
+
+/* Em telas baixas (paisagem de celular), controles um pouco menores */
+@media (orientation: landscape) and (max-height: 460px) {
+  .joystick { width: 118px; height: 118px; left: 20px; bottom: 18px; }
+  .joystick .knob { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+  .jump-btn { width: 88px; height: 88px; right: 22px; bottom: 26px; }
+  .shoot-btn { width: 76px; height: 76px; right: 124px; bottom: 40px; }
+}

@@ -60,9 +60,24 @@ Abra `sprite-demo.html` no navegador. A animação usa
 O painel no canto inferior também permite mudar velocidade e escala ao vivo
 (pode ser removido — é só para testes).
 
-## 🎮 Mini game (joystick)
+## 🎮 O jogo — Madu in Love (platformer, paisagem)
 
-Abra `index.html` (é a página principal) para controlar o personagem num cenário:
+Abra `index.html`. O jogo é em **modo paisagem** (deite o celular — em retrato
+aparece um aviso pra girar). Fluxo:
+
+- **Menu inicial** (`assets/menu_bg.png`): **INICIAR JOGO** começa; *Configurações*
+  e *Conquistas* mostram "em breve". Botão ☰ no jogo volta pro menu.
+- **Platformer**: gravidade de verdade, **chão** + **3 plataformas flutuantes**.
+  Joystick anda pra esquerda/direita, **PULAR** (ou espaço / ↑ / W) pula e pousa
+  em cima das plataformas (são one-way: dá pra subir por baixo). **♥** (ou F)
+  atira a flecha-coração; pulando, a flecha sai mais alta.
+
+Ajustes rápidos: constantes de física em `game.js` (`GRAV`, `JUMP_VEL`), tamanho
+do personagem em `--player-scale`, e as plataformas em `PLAT_DEFS`.
+
+## Controlar só o personagem (mascote)
+
+O mesmo personagem pode ser usado num cenário simples:
 
 - **Joystick virtual** (canto inferior esquerdo) — funciona com toque e mouse.
 - **Teclado** — WASD ou setas (com diagonais).

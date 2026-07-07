@@ -3,47 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Madu — Mini Game 🚶</title>
+  <title>Madu in Love</title>
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
-  <div class="stage" id="stage">
-    <div class="cloud" style="left:12%; top:14%; width:60px; height:24px;"></div>
-    <div class="cloud" style="left:62%; top:9%;  width:80px; height:28px;"></div>
-    <div class="cloud" style="left:82%; top:22%; width:50px; height:20px;"></div>
+  <!-- Aviso pra deitar o celular (aparece só em retrato) -->
+  <div id="orient">
+    <div class="orient-card">
+      <div class="orient-phone">📱↻</div>
+      <p>Gire o celular para jogar<br><small>modo paisagem</small></p>
+    </div>
+  </div>
 
-    <div class="player" id="player">
-      <div class="sprite" id="sprite"></div>
+  <!-- MENU inicial (a arte do menu que você fez) -->
+  <div id="menu">
+    <div class="menu-frame">
+      <button class="menu-hot" id="startBtn" style="left:40.5%; top:76.8%; width:19%; height:7.2%"></button>
+      <button class="menu-hot" id="cfgBtn"   style="left:41.6%; top:85.2%; width:16.6%; height:6%"></button>
+      <button class="menu-hot" id="achBtn"   style="left:42.5%; top:92%;  width:15%; height:6%"></button>
+    </div>
+    <div class="menu-toast" id="menuToast"></div>
+  </div>
+
+  <!-- JOGO (plataforma, paisagem) -->
+  <div class="stage" id="stage" hidden>
+    <div class="cloud" style="left:10%; top:12%; width:64px; height:24px;"></div>
+    <div class="cloud" style="left:58%; top:8%;  width:86px; height:30px;"></div>
+    <div class="cloud" style="left:84%; top:18%; width:54px; height:20px;"></div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="coins"><span class="coin">◉</span> <span id="coinCount">0</span></div>
     </div>
 
-    <!-- Joystick virtual (toque ou mouse) -->
-    <div class="joystick" id="joystick">
-      <div class="knob" id="knob"></div>
-    </div>
+    <!-- Plataformas (posicionadas por JS) -->
+    <div id="platforms"></div>
 
-    <!-- Botao de pulo (toque/clique ou barra de espaco) -->
+    <!-- Chao -->
+    <div id="ground"></div>
+
+    <!-- Personagem -->
+    <div class="player" id="player"><div class="sprite" id="sprite"></div></div>
+
+    <!-- Controles -->
+    <div class="joystick" id="joystick"><div class="knob" id="knob"></div></div>
+    <button class="shoot-btn" id="shootBtn" type="button" aria-label="Atirar">♥</button>
     <button class="jump-btn" id="jumpBtn" type="button">PULAR</button>
 
-    <!-- Botao de tiro (toque/clique ou tecla F) -->
-    <button class="shoot-btn" id="shootBtn" type="button" aria-label="Atirar">♥</button>
-
-    <!-- HUD com ajustes ao vivo -->
-    <div class="hud">
-      <h1>🕹️ Controles</h1>
-      <label>Velocidade
-        <input id="speed" type="range" min="60" max="500" step="10" value="240">
-        <span class="val" id="speedVal"></span>
-      </label>
-      <label>Passada
-        <input id="walk" type="range" min="0.3" max="1.4" step="0.05" value="0.7">
-        <span class="val" id="walkVal"></span>
-      </label>
-      <label>Tamanho
-        <input id="scale" type="range" min="0.3" max="1.2" step="0.05" value="0.55">
-        <span class="val" id="scaleVal"></span>
-      </label>
-      <div class="hint">Joystick ou WASD/setas · <b>PULAR</b>/espaço · <b>♥</b>/tecla F atira</div>
-    </div>
+    <button class="menu-back" id="backBtn" type="button" aria-label="Voltar ao menu">☰</button>
   </div>
 
   <script src="game.js"></script>
