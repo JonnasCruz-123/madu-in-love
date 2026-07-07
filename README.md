@@ -68,6 +68,10 @@ Abra `index.html` (é a página principal) para controlar o personagem num cená
 - **Teclado** — WASD ou setas (com diagonais).
 - O personagem **anima ao andar** e **para quando solta**; vira para o lado do
   movimento (espelhado à direita).
+- **Pulo**: botão **PULAR** (canto inferior direito) ou **barra de espaço**. O
+  arco do pulo já está embutido nos frames (`output/jump_strip.png`, 1×6); ao
+  pular, a personagem decola e a sombra do chão fica para trás. Processado por
+  `process_jump.py` (remove a grade **e** as sombras cinza de cada frame).
 - HUD com sliders ao vivo: **velocidade** de deslocamento, **passada** (rapidez
   das pernas) e **tamanho** do personagem.
 

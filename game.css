@@ -4,11 +4,18 @@
    >>> AJUSTES RAPIDOS na :root abaixo <<<
    ============================================================ */
 :root {
-  /* Sprite */
+  /* Sprite de caminhada */
   --sprite: url("output/walk_strip.png");
   --frame-w: 288px;
   --frame-h: 338px;
   --frames: 8;
+
+  /* Sprite de pulo (arco ja embutido nos frames) */
+  --jump-sprite: url("output/jump_strip.png");
+  --jump-w: 266px;
+  --jump-h: 448px;
+  --jump-frames: 6;
+  --jump-speed: 0.62s;   /* duracao de um pulo */
 
   /* Velocidade da animacao de passo (menor = pernas mais rapidas) */
   --walk-speed: 0.7s;
@@ -90,9 +97,23 @@ body {
 }
 .sprite.is-walking { animation-play-state: running; }
 
+/* Pulo: troca a tira, cresce o quadro (espaco pro arco) e toca UMA vez.
+   Mesma origem (bottom center) => os pes continuam no chao ao decolar. */
+.sprite.is-jumping {
+  width: var(--jump-w);
+  height: var(--jump-h);
+  background-image: var(--jump-sprite);
+  animation: jump var(--jump-speed) steps(var(--jump-frames)) 1;
+  animation-play-state: running;
+}
+
 @keyframes walk {
   from { background-position-x: 0; }
   to   { background-position-x: calc(var(--frame-w) * var(--frames) * -1); }
+}
+@keyframes jump {
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--jump-w) * var(--jump-frames) * -1); }
 }
 
 /* sombra elíptica no chao, sob os pes */
@@ -131,6 +152,27 @@ body {
   box-shadow: 0 4px 10px rgba(0,0,0,.3);
   transition: transform .04s linear;
 }
+
+/* ---------------- Botao de pulo ---------------- */
+.jump-btn {
+  position: fixed;
+  right: 34px;
+  bottom: 44px;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .6);
+  background: radial-gradient(circle at 35% 30%, #ffe08a, #f5a623);
+  color: #5a3d00;
+  font: 700 20px/1 system-ui, sans-serif;
+  letter-spacing: .5px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .3);
+  touch-action: none;
+  z-index: 10;
+  transition: transform .06s ease;
+}
+.jump-btn:active,
+.jump-btn.pressed { transform: scale(.9); }
 
 /* ---------------- HUD ---------------- */
 .hud {

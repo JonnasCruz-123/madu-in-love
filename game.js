@@ -8,6 +8,7 @@
   const sprite = document.getElementById('sprite');
   const stick  = document.getElementById('joystick');
   const knob   = document.getElementById('knob');
+  const jumpBtn = document.getElementById('jumpBtn');
 
   // ---- estado ----
   const cfg = {
@@ -36,6 +37,28 @@
       minY: h,     maxY: stage.clientHeight - 8,
     };
   }
+
+  // ---- pulo (o arco ja esta embutido nos frames; roda a tira UMA vez) ----
+  let jumping = false, jumpTimer = 0;
+  function endJump() {
+    if (!jumping) return;
+    jumping = false;
+    clearTimeout(jumpTimer);
+    sprite.classList.remove('is-jumping');
+    place();                         // volta ao quadro de caminhada
+  }
+  function jump() {
+    if (jumping) return;             // nao reinicia no meio do pulo
+    jumping = true;
+    sprite.classList.remove('is-walking');
+    sprite.classList.add('is-jumping');
+    place();                         // quadro do pulo e mais alto (espaco pro arco)
+    jumpTimer = setTimeout(endJump, 1000);   // seguranca, caso animationend falhe
+  }
+  // ao terminar a animacao "jump", volta ao normal
+  sprite.addEventListener('animationend', (e) => {
+    if (e.animationName === 'jump') endJump();
+  });
 
   // ---- joystick (Pointer Events: mouse + toque unificados) ----
   const R = 70;                 // raio maximo do knob (px)
@@ -73,8 +96,22 @@
     ArrowUp: 'u', KeyW: 'u', ArrowDown: 'd', KeyS: 'd',
     ArrowLeft: 'l', KeyA: 'l', ArrowRight: 'r', KeyD: 'r',
   };
-  addEventListener('keydown', e => { if (KEYMAP[e.code]) { keys.add(KEYMAP[e.code]); e.preventDefault(); } });
+  addEventListener('keydown', e => {
+    if (KEYMAP[e.code]) { keys.add(KEYMAP[e.code]); e.preventDefault(); }
+    if (e.code === 'Space') { jump(); e.preventDefault(); }
+  });
   addEventListener('keyup',   e => { if (KEYMAP[e.code]) keys.delete(KEYMAP[e.code]); });
+
+  // ---- botao de pulo (toque / clique) ----
+  jumpBtn.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    jumpBtn.classList.add('pressed');
+    jump();
+  });
+  const unpress = () => jumpBtn.classList.remove('pressed');
+  jumpBtn.addEventListener('pointerup', unpress);
+  jumpBtn.addEventListener('pointercancel', unpress);
+  jumpBtn.addEventListener('pointerleave', unpress);
 
   function keyVector() {
     let kx = (keys.has('r') ? 1 : 0) - (keys.has('l') ? 1 : 0);
