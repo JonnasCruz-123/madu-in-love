@@ -9,6 +9,7 @@
   const stick  = document.getElementById('joystick');
   const knob   = document.getElementById('knob');
   const jumpBtn = document.getElementById('jumpBtn');
+  const shootBtn = document.getElementById('shootBtn');
 
   // ---- estado ----
   const cfg = {
@@ -48,16 +49,76 @@
     place();                         // volta ao quadro de caminhada
   }
   function jump() {
-    if (jumping) return;             // nao reinicia no meio do pulo
+    if (jumping || shooting) return;   // uma acao de cada vez
     jumping = true;
     sprite.classList.remove('is-walking');
     sprite.classList.add('is-jumping');
     place();                         // quadro do pulo e mais alto (espaco pro arco)
     jumpTimer = setTimeout(endJump, 1000);   // seguranca, caso animationend falhe
   }
-  // ao terminar a animacao "jump", volta ao normal
+
+  // ---- tiro (flecha-coracao) ----
+  const projectiles = [];
+  let shooting = false, shootTimer = 0, projTimer = 0;
+
+  function num(v) { return parseFloat(getComputedStyle(root).getPropertyValue(v)); }
+
+  function spawnProjectile() {
+    const scale = num('--player-scale');
+    const dir = -face;                       // face 1(esq)=> -1 ; face -1(dir)=> +1
+    const w = num('--projectile-w') * scale;
+    const h = num('--projectile-h') * scale;
+    const el = document.createElement('div');
+    el.className = 'projectile';
+    stage.appendChild(el);
+    const p = {
+      el, w, h, vx: dir * num('--projectile-speed'), flip: dir < 0,
+      x: pos.x + dir * (num('--shoot-w') * scale * 0.34),   // sai a frente, na ponta do arco
+      y: pos.y - num('--shoot-h') * scale * 0.48,           // altura do arco/mao
+    };
+    projectiles.push(p);
+    drawProjectile(p);
+  }
+  function drawProjectile(p) {
+    p.el.style.width = p.w + 'px';
+    p.el.style.height = p.h + 'px';
+    p.el.style.transform =
+      `translate3d(${p.x - p.w / 2}px, ${p.y - p.h / 2}px, 0)` + (p.flip ? ' scaleX(-1)' : '');
+  }
+  function updateProjectiles(dt) {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const p = projectiles[i];
+      p.x += p.vx * dt;
+      drawProjectile(p);
+      if (p.x < -p.w || p.x > stage.clientWidth + p.w) {   // saiu da tela -> remove
+        p.el.remove();
+        projectiles.splice(i, 1);
+      }
+    }
+  }
+
+  function endShoot() {
+    if (!shooting) return;
+    shooting = false;
+    clearTimeout(shootTimer);
+    sprite.classList.remove('is-shooting');
+    place();
+  }
+  function shoot() {
+    if (jumping || shooting) return;   // uma acao de cada vez
+    shooting = true;
+    sprite.classList.remove('is-walking');
+    sprite.classList.add('is-shooting');
+    place();
+    // o coracao sai quando ela solta a corda (~frame 4)
+    projTimer = setTimeout(spawnProjectile, num('--shoot-speed') * 1000 * 0.45);
+    shootTimer = setTimeout(endShoot, 1400);
+  }
+
+  // ao terminar as animacoes de acao, volta ao normal
   sprite.addEventListener('animationend', (e) => {
     if (e.animationName === 'jump') endJump();
+    if (e.animationName === 'shoot') endShoot();
   });
 
   // ---- joystick (Pointer Events: mouse + toque unificados) ----
@@ -99,19 +160,20 @@
   addEventListener('keydown', e => {
     if (KEYMAP[e.code]) { keys.add(KEYMAP[e.code]); e.preventDefault(); }
     if (e.code === 'Space') { jump(); e.preventDefault(); }
+    if (e.code === 'KeyF' || e.code === 'Enter') { shoot(); e.preventDefault(); }
   });
   addEventListener('keyup',   e => { if (KEYMAP[e.code]) keys.delete(KEYMAP[e.code]); });
 
-  // ---- botao de pulo (toque / clique) ----
-  jumpBtn.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    jumpBtn.classList.add('pressed');
-    jump();
-  });
-  const unpress = () => jumpBtn.classList.remove('pressed');
-  jumpBtn.addEventListener('pointerup', unpress);
-  jumpBtn.addEventListener('pointercancel', unpress);
-  jumpBtn.addEventListener('pointerleave', unpress);
+  // ---- botoes de acao (toque / clique) ----
+  function bindButton(btn, fn) {
+    btn.addEventListener('pointerdown', e => { e.preventDefault(); btn.classList.add('pressed'); fn(); });
+    const off = () => btn.classList.remove('pressed');
+    btn.addEventListener('pointerup', off);
+    btn.addEventListener('pointercancel', off);
+    btn.addEventListener('pointerleave', off);
+  }
+  bindButton(jumpBtn, jump);
+  bindButton(shootBtn, shoot);
 
   function keyVector() {
     let kx = (keys.has('r') ? 1 : 0) - (keys.has('l') ? 1 : 0);
@@ -149,6 +211,7 @@
     }
     sprite.classList.toggle('is-walking', moving);
 
+    updateProjectiles(dt);
     requestAnimationFrame(tick);
   }
 

@@ -153,6 +153,7 @@ def main():
         up = max(up, by)              # altura acima da base (base incluida)
         metrics.append((cx, by, w, h))
 
+    left = right = max(left, right)   # pes centrados => troca de sprite sem pulo lateral
     frame_w = left + right + 1 + 2 * PAD
     frame_h = up + 1 + 2 * PAD
     # Alturas de sprite pares deixam o pixel-art mais estavel:

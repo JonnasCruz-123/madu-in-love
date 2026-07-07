@@ -104,6 +104,7 @@ def main():
     # Dimensoes normalizadas.
     left = max(f["cx"] for f in frames)
     right = max(f["w"] - 1 - f["cx"] for f in frames)
+    left = right = max(left, right)   # centro estavel => troca de sprite sem pulo lateral
     frame_w = left + right + 1 + 2 * PAD
     top_above = max(f["rise"] + f["h"] for f in frames)   # ponto mais alto acima do chao
     frame_h = top_above + 2 * PAD

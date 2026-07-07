@@ -6,16 +6,27 @@
 :root {
   /* Sprite de caminhada */
   --sprite: url("output/walk_strip.png");
-  --frame-w: 288px;
+  --frame-w: 328px;
   --frame-h: 338px;
   --frames: 8;
 
   /* Sprite de pulo (arco ja embutido nos frames) */
   --jump-sprite: url("output/jump_strip.png");
-  --jump-w: 266px;
+  --jump-w: 276px;
   --jump-h: 448px;
   --jump-frames: 6;
   --jump-speed: 0.62s;   /* duracao de um pulo */
+
+  /* Sprite de tiro (arco e flecha) + projetil separado */
+  --shoot-sprite: url("output/shoot_strip.png");
+  --shoot-w: 446px;
+  --shoot-h: 318px;
+  --shoot-frames: 8;
+  --shoot-speed: 0.72s;  /* duracao da animacao de tiro */
+  --projectile: url("output/projectile_heart.png");
+  --projectile-w: 156px;
+  --projectile-h: 51px;
+  --projectile-speed: 720;   /* px/s que o coracao voa */
 
   /* Velocidade da animacao de passo (menor = pernas mais rapidas) */
   --walk-speed: 0.7s;
@@ -107,6 +118,15 @@ body {
   animation-play-state: running;
 }
 
+/* Tiro: troca a tira e toca UMA vez. Mesma base (feet) que a caminhada. */
+.sprite.is-shooting {
+  width: var(--shoot-w);
+  height: var(--shoot-h);
+  background-image: var(--shoot-sprite);
+  animation: shoot var(--shoot-speed) steps(var(--shoot-frames)) 1;
+  animation-play-state: running;
+}
+
 @keyframes walk {
   from { background-position-x: 0; }
   to   { background-position-x: calc(var(--frame-w) * var(--frames) * -1); }
@@ -114,6 +134,24 @@ body {
 @keyframes jump {
   from { background-position-x: 0; }
   to   { background-position-x: calc(var(--jump-w) * var(--jump-frames) * -1); }
+}
+@keyframes shoot {
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--shoot-w) * var(--shoot-frames) * -1); }
+}
+
+/* ---------------- Projetil (flecha-coracao) ---------------- */
+.projectile {
+  position: absolute;
+  left: 0; top: 0;
+  width: var(--projectile-w);
+  height: var(--projectile-h);
+  background: var(--projectile) no-repeat center / contain;
+  image-rendering: pixelated;
+  transform-origin: center;
+  will-change: transform;
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* sombra elíptica no chao, sob os pes */
@@ -173,6 +211,26 @@ body {
 }
 .jump-btn:active,
 .jump-btn.pressed { transform: scale(.9); }
+
+/* ---------------- Botao de tiro ---------------- */
+.shoot-btn {
+  position: fixed;
+  right: 158px;
+  bottom: 62px;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .6);
+  background: radial-gradient(circle at 35% 30%, #ff9ecb, #e8437f);
+  color: #fff;
+  font: 700 30px/1 system-ui, sans-serif;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .3);
+  touch-action: none;
+  z-index: 10;
+  transition: transform .06s ease;
+}
+.shoot-btn:active,
+.shoot-btn.pressed { transform: scale(.9); }
 
 /* ---------------- HUD ---------------- */
 .hud {

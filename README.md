@@ -72,6 +72,12 @@ Abra `index.html` (é a página principal) para controlar o personagem num cená
   arco do pulo já está embutido nos frames (`output/jump_strip.png`, 1×6); ao
   pular, a personagem decola e a sombra do chão fica para trás. Processado por
   `process_jump.py` (remove a grade **e** as sombras cinza de cada frame).
+- **Tiro**: botão **♥** ou **tecla F / Enter**. Toca a animação de arco
+  (`output/shoot_strip.png`, 1×8) e dispara um **projétil separado**
+  (`output/projectile_heart.png`, a flecha-coração) que sai do arco e voa até
+  sair da tela, no sentido para onde a personagem está virada. Processado por
+  `process_shoot.py`, que também **extrai o PNG do projétil** e espelha os
+  frames para a personagem olhar para a esquerda (consistente com a caminhada).
 - HUD com sliders ao vivo: **velocidade** de deslocamento, **passada** (rapidez
   das pernas) e **tamanho** do personagem.
 
