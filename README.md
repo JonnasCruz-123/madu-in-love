@@ -43,7 +43,7 @@ python3 process_sprites.py assets/source/walk_sheet.png
 
 ## Demo da animação
 
-Abra `index.html` no navegador. A animação usa
+Abra `sprite-demo.html` no navegador. A animação usa
 `animation: walk var(--speed) steps(8) infinite` + `image-rendering: pixelated`.
 
 ### Ajustes rápidos (em `style.css`, bloco `:root`)
@@ -59,6 +59,20 @@ Abra `index.html` no navegador. A animação usa
 
 O painel no canto inferior também permite mudar velocidade e escala ao vivo
 (pode ser removido — é só para testes).
+
+## 🎮 Mini game (joystick)
+
+Abra `index.html` (é a página principal) para controlar o personagem num cenário:
+
+- **Joystick virtual** (canto inferior esquerdo) — funciona com toque e mouse.
+- **Teclado** — WASD ou setas (com diagonais).
+- O personagem **anima ao andar** e **para quando solta**; vira para o lado do
+  movimento (espelhado à direita).
+- HUD com sliders ao vivo: **velocidade** de deslocamento, **passada** (rapidez
+  das pernas) e **tamanho** do personagem.
+
+Arquivos: `index.html`, `game.css`, `game.js`. Os ajustes rápidos ficam no bloco
+`:root` de `game.css` (`--move-speed`, `--walk-speed`, `--player-scale`, `--sprite`…).
 
 ---
 

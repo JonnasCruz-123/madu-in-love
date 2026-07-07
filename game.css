@@ -1,0 +1,153 @@
+/* ============================================================
+   Mini game — mascote andando com joystick
+   ------------------------------------------------------------
+   >>> AJUSTES RAPIDOS na :root abaixo <<<
+   ============================================================ */
+:root {
+  /* Sprite */
+  --sprite: url("output/walk_strip.png");
+  --frame-w: 288px;
+  --frame-h: 338px;
+  --frames: 8;
+
+  /* Velocidade da animacao de passo (menor = pernas mais rapidas) */
+  --walk-speed: 0.7s;
+
+  /* Tamanho do personagem na tela */
+  --player-scale: 0.55;
+
+  /* Velocidade de deslocamento pelo cenario (px por segundo) */
+  --move-speed: 240;
+
+  /* Sentido (1 = original/olhando p/ esquerda, -1 = espelhado) */
+  --face: 1;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none; /* impede scroll/zoom ao arrastar o joystick */
+}
+
+/* ---------------- Cenario ---------------- */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(#8fd3ff 0%, #bfe9ff 45%, #cfeecb 45%, #a9dd9e 100%);
+}
+/* faixa de "chao" com leve textura */
+.stage::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0; height: 55%;
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0 2px, transparent 2px 40px),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.35), transparent 60%);
+  pointer-events: none;
+}
+
+/* nuvenzinhas decorativas */
+.cloud {
+  position: absolute;
+  background: rgba(255,255,255,.9);
+  border-radius: 50%;
+  filter: blur(1px);
+  box-shadow: 40px 8px 0 -6px rgba(255,255,255,.9),
+              -38px 10px 0 -8px rgba(255,255,255,.9);
+}
+
+/* ---------------- Personagem ---------------- */
+.player {
+  position: absolute;
+  left: 0; top: 0;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  filter: drop-shadow(0 8px 6px rgba(0,0,0,.25));
+}
+.sprite {
+  width: var(--frame-w);
+  height: var(--frame-h);
+  background-image: var(--sprite);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  /* posiciona pela base dos pes e aplica escala + espelhamento */
+  transform-origin: bottom center;
+  transform: scaleX(calc(var(--face) * var(--player-scale)))
+             scaleY(var(--player-scale));
+
+  animation: walk var(--walk-speed) steps(var(--frames)) infinite;
+  animation-play-state: paused;   /* so anda quando .is-walking */
+}
+.sprite.is-walking { animation-play-state: running; }
+
+@keyframes walk {
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--frame-w) * var(--frames) * -1); }
+}
+
+/* sombra elíptica no chao, sob os pes */
+.player::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: 6px;
+  width: calc(var(--frame-w) * var(--player-scale) * 0.42);
+  height: 14px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(0,0,0,.28), transparent 70%);
+  pointer-events: none;
+}
+
+/* ---------------- Joystick ---------------- */
+.joystick {
+  position: fixed;
+  left: 28px;
+  bottom: 28px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  border: 2px solid rgba(255,255,255,.55);
+  backdrop-filter: blur(4px);
+  touch-action: none;
+  z-index: 10;
+}
+.joystick .knob {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 62px; height: 62px;
+  margin: -31px 0 0 -31px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #cfd6e6);
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  transition: transform .04s linear;
+}
+
+/* ---------------- HUD ---------------- */
+.hud {
+  position: fixed;
+  top: 14px; right: 14px;
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(20,23,31,.72);
+  color: #eef2fb;
+  font-size: 13px;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+}
+.hud h1 { margin: 0 0 2px; font-size: 14px; }
+.hud label { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.hud input[type="range"] { width: 130px; }
+.hud .val { font-variant-numeric: tabular-nums; opacity: .85; min-width: 40px; text-align: right; }
+.hint { font-size: 11px; opacity: .7; }
