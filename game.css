@@ -400,3 +400,13 @@ body {
   .jump-btn  { right: calc(22px + env(safe-area-inset-right)); bottom: calc(26px + env(safe-area-inset-bottom)); }
   .shoot-btn { right: calc(124px + env(safe-area-inset-right)); bottom: calc(40px + env(safe-area-inset-bottom)); }
 }
+
+/* selo de versao no menu (pra confirmar que atualizou) */
+.menu-ver {
+  position: fixed; left: 50%; bottom: calc(6px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 60; padding: 3px 10px; border-radius: 999px;
+  background: rgba(20,16,28,.5); color: #ffe6f0;
+  font: 600 11px/1 system-ui, sans-serif; letter-spacing: .3px;
+  pointer-events: none;
+}
