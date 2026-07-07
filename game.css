@@ -10,12 +10,13 @@
   --frame-h: 338px;
   --frames: 8;
 
-  /* Sprite de pulo (arco ja embutido nos frames) */
+  /* Sprite de pulo (poses; o arco de subida e feito por JS) */
   --jump-sprite: url("output/jump_strip.png");
   --jump-w: 276px;
-  --jump-h: 448px;
+  --jump-h: 338px;
   --jump-frames: 6;
-  --jump-speed: 0.62s;   /* duracao de um pulo */
+  --jump-speed: 0.6s;    /* duracao de um pulo (poses + subida) */
+  --jump-height: 150px;  /* altura maxima que ela sobe na tela */
 
   /* Sprite de tiro (arco e flecha) + projetil separado */
   --shoot-sprite: url("output/shoot_strip.png");
@@ -98,10 +99,11 @@ body {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 
-  /* posiciona pela base dos pes e aplica escala + espelhamento */
+  /* posiciona pela base dos pes e aplica escala + espelhamento.
+     --scale-mult ajusta cada animacao pro mesmo tamanho de personagem. */
   transform-origin: bottom center;
-  transform: scaleX(calc(var(--face) * var(--player-scale)))
-             scaleY(var(--player-scale));
+  transform: scaleX(calc(var(--face) * var(--player-scale) * var(--scale-mult, 1)))
+             scaleY(calc(var(--player-scale) * var(--scale-mult, 1)));
 
   animation: walk var(--walk-speed) steps(var(--frames)) infinite;
   animation-play-state: paused;   /* so anda quando .is-walking */
@@ -111,6 +113,7 @@ body {
 /* Pulo: troca a tira, cresce o quadro (espaco pro arco) e toca UMA vez.
    Mesma origem (bottom center) => os pes continuam no chao ao decolar. */
 .sprite.is-jumping {
+  --scale-mult: 1.06;   /* pulo estava desenhado menor -> iguala ao tamanho base */
   width: var(--jump-w);
   height: var(--jump-h);
   background-image: var(--jump-sprite);
@@ -120,12 +123,15 @@ body {
 
 /* Tiro: troca a tira e toca UMA vez. Mesma base (feet) que a caminhada. */
 .sprite.is-shooting {
+  --scale-mult: 1.0;    /* tiro ja bate com o tamanho base */
   width: var(--shoot-w);
   height: var(--shoot-h);
   background-image: var(--shoot-sprite);
   animation: shoot var(--shoot-speed) steps(var(--shoot-frames)) 1;
   animation-play-state: running;
 }
+/* atirar tem prioridade visual sobre pular (mostra o arco no ar) */
+.sprite.is-shooting.is-jumping { --scale-mult: 1.0; }
 
 @keyframes walk {
   from { background-position-x: 0; }

@@ -96,10 +96,10 @@ def main():
         info["img"] = sub
         frames.append(info)
 
-    # Linha do chao = maior "base" entre os frames apoiados no chao.
-    ground = max(f["feet"] for f in frames)
+    # Alinhamento pelos pes (o arco do pulo agora e feito por JS no jogo,
+    # entao os frames guardam so as POSES, com os pes na mesma linha).
     for f in frames:
-        f["rise"] = ground - f["feet"]           # quanto o frame esta no ar
+        f["rise"] = 0
 
     # Dimensoes normalizadas.
     left = max(f["cx"] for f in frames)

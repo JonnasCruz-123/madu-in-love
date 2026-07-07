@@ -75,9 +75,13 @@ Abra `index.html` (é a página principal) para controlar o personagem num cená
 - **Tiro**: botão **♥** ou **tecla F / Enter**. Toca a animação de arco
   (`output/shoot_strip.png`, 1×8) e dispara um **projétil separado**
   (`output/projectile_heart.png`, a flecha-coração) que sai do arco e voa até
-  sair da tela, no sentido para onde a personagem está virada. Processado por
-  `process_shoot.py`, que também **extrai o PNG do projétil** e espelha os
-  frames para a personagem olhar para a esquerda (consistente com a caminhada).
+  sair da tela, no sentido para onde a personagem está virada. Enquanto atira
+  ela fica **parada**. Processado por `process_shoot.py`, que também **extrai o
+  PNG do projétil** e espelha os frames para olhar à esquerda.
+- **Pulo + tiro**: dá pra **pular e atirar juntos** — a subida do pulo é feita
+  por JS (ela sobe de verdade na tela), então a flecha sai **mais alta**.
+- **Tamanho consistente**: todas as animações são normalizadas para o mesmo
+  tamanho de personagem (variável CSS `--scale-mult` por animação).
 - HUD com sliders ao vivo: **velocidade** de deslocamento, **passada** (rapidez
   das pernas) e **tamanho** do personagem.
 

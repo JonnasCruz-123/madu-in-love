@@ -18,17 +18,17 @@
   let vx = 0, vy = 0;            // vetor de entrada normalizado (-1..1)
   let face = 1;                 // 1 = esquerda (original), -1 = direita
   let pos = { x: 0, y: 0 };     // posicao do pe do personagem no cenario
+  let jumpOffset = 0;           // quanto ela esta acima do chao (pulo), em px
   const keys = new Set();
   const DEAD = 0.12;            // zona morta do joystick
 
   // Posiciona o personagem: (pos.x,pos.y) = base dos pes (centro-inferior).
+  // jumpOffset sobe a personagem inteira (o pulo e feito aqui, por JS).
   function place() {
-    // .player usa transform-origin bottom center no sprite, entao alinhamos
-    // o canto do .player de modo que o centro-base caia em (pos.x,pos.y).
-    const w = sprite.offsetWidth;   // largura ja escalada
+    const w = sprite.offsetWidth;
     const h = sprite.offsetHeight;
     player.style.transform =
-      `translate3d(${pos.x - w / 2}px, ${pos.y - h}px, 0)`;
+      `translate3d(${pos.x - w / 2}px, ${pos.y - h - jumpOffset}px, 0)`;
   }
 
   function bounds() {
@@ -39,22 +39,13 @@
     };
   }
 
-  // ---- pulo (o arco ja esta embutido nos frames; roda a tira UMA vez) ----
-  let jumping = false, jumpTimer = 0;
-  function endJump() {
-    if (!jumping) return;
-    jumping = false;
-    clearTimeout(jumpTimer);
-    sprite.classList.remove('is-jumping');
-    place();                         // volta ao quadro de caminhada
-  }
+  // ---- pulo: a subida e por JS (ela sobe de verdade na tela) ----
+  //  Pode pular enquanto atira -> a flecha sai mais alta.
+  let jumping = false, jumpT = 0;
   function jump() {
-    if (jumping || shooting) return;   // uma acao de cada vez
-    jumping = true;
-    sprite.classList.remove('is-walking');
-    sprite.classList.add('is-jumping');
-    place();                         // quadro do pulo e mais alto (espaco pro arco)
-    jumpTimer = setTimeout(endJump, 1000);   // seguranca, caso animationend falhe
+    if (jumping) return;             // nao reinicia no meio do pulo
+    jumping = true; jumpT = 0;
+    sprite.classList.add('is-jumping');   // poses do pulo (o tiro tem prioridade visual)
   }
 
   // ---- tiro (flecha-coracao) ----
@@ -74,7 +65,7 @@
     const p = {
       el, w, h, vx: dir * num('--projectile-speed'), flip: dir < 0,
       x: pos.x + dir * (num('--shoot-w') * scale * 0.34),   // sai a frente, na ponta do arco
-      y: pos.y - num('--shoot-h') * scale * 0.48,           // altura do arco/mao
+      y: pos.y - jumpOffset - num('--shoot-h') * scale * 0.48,  // altura do arco (+ pulo)
     };
     projectiles.push(p);
     drawProjectile(p);
@@ -105,7 +96,7 @@
     place();
   }
   function shoot() {
-    if (jumping || shooting) return;   // uma acao de cada vez
+    if (shooting) return;              // nao reinicia no meio do tiro (mas pode pular junto)
     shooting = true;
     sprite.classList.remove('is-walking');
     sprite.classList.add('is-shooting');
@@ -115,9 +106,8 @@
     shootTimer = setTimeout(endShoot, 1400);
   }
 
-  // ao terminar as animacoes de acao, volta ao normal
+  // ao terminar a animacao de tiro, volta ao normal (o pulo termina pelo JS)
   sprite.addEventListener('animationend', (e) => {
-    if (e.animationName === 'jump') endJump();
     if (e.animationName === 'shoot') endShoot();
   });
 
@@ -194,7 +184,8 @@
     const mag = Math.hypot(ix, iy);
     if (mag > 1) { ix /= mag; iy /= mag; }
 
-    const moving = mag > DEAD;
+    // enquanto atira ela fica PARADA (nao anda)
+    const moving = mag > DEAD && !shooting;
     if (moving) {
       const sp = cfg.speed;
       pos.x += ix * sp * dt;
@@ -207,10 +198,22 @@
       if (ix < -0.05) face = 1;
       else if (ix > 0.05) face = -1;
       root.style.setProperty('--face', face);
-      place();
     }
     sprite.classList.toggle('is-walking', moving);
 
+    // pulo (arco por JS): sobe e desce em ~meio seno
+    if (jumping) {
+      jumpT += dt;
+      const dur = num('--jump-speed');
+      if (jumpT >= dur) {
+        jumping = false; jumpOffset = 0;
+        sprite.classList.remove('is-jumping');
+      } else {
+        jumpOffset = num('--jump-height') * Math.sin(Math.PI * jumpT / dur);
+      }
+    }
+
+    place();
     updateProjectiles(dt);
     requestAnimationFrame(tick);
   }
