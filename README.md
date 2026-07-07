@@ -60,6 +60,20 @@ Abra `index.html` no navegador. A animação usa
 O painel no canto inferior também permite mudar velocidade e escala ao vivo
 (pode ser removido — é só para testes).
 
+## 🎮 Mini game (joystick)
+
+Abra `game.html` para controlar o personagem num cenário:
+
+- **Joystick virtual** (canto inferior esquerdo) — funciona com toque e mouse.
+- **Teclado** — WASD ou setas (com diagonais).
+- O personagem **anima ao andar** e **para quando solta**; vira para o lado do
+  movimento (espelhado à direita).
+- HUD com sliders ao vivo: **velocidade** de deslocamento, **passada** (rapidez
+  das pernas) e **tamanho** do personagem.
+
+Arquivos: `game.html`, `game.css`, `game.js`. Os ajustes rápidos ficam no bloco
+`:root` de `game.css` (`--move-speed`, `--walk-speed`, `--player-scale`, `--sprite`…).
+
 ---
 
 (⁠◍⁠•⁠ᴗ⁠•⁠◍⁠)⁠❤
